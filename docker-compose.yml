@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  sinatra:
+    restart: 'unless-stopped'
+    image: 'almabulk:latest'
+    ports:
+      - '9292:9292'
+    env_file:
+      - '.env'

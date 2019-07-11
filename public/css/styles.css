@@ -1,0 +1,31 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+div.container {
+  width: 100%;
+  text-align: center;
+}
+
+fieldset {
+  display: inline-block;
+  vertical-align: top;
+  width: calc(100% / 4);
+  height: 20%;
+  text-align: left;
+  margin: 20px;
+}
+
+input {
+  margin: 4px;
+}
+
+input.submit {
+  font-weight: bold;
+}
+
+legend {
+  background-color: #006;
+  color: #fff;
+  padding: 3px 6px;
+}

@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <title>Bulk Updates</title>
+    <script type="text/javascript">
+      function redir_to_download() {
+          var mmsid = document.getElementById('mmsid').value;
+          var hldid = document.getElementById('hldid').value;
+          window.location = "/" + mmsid + "/" + hldid;
+      }
+    </script>
+    <link href="css/styles.css" rel="stylesheet"/>
+  </head>
+
+  <body>
+    <div class="container">
+      <fieldset>
+        <legend>Export Item Data</legend>
+        <label for="mmsid">MMSID:</label>
+        <input type="text" id="mmsid"></input>
+        <br/>
+        <label for="hldid">Holding ID:</label>
+        <input type="text" id="hldid"></input>
+        <br/>
+        <input type="button" class="submit" value="Export" onclick="javascript:redir_to_download()"></input>
+      </fieldset>
+      <fieldset>
+        <legend>Upload Item Updates</legend>
+        <form method="post" enctype="multipart/form-data">
+          <label for="upload">Spreadsheet:</label>
+          <input type="file" id="upload" name="updatefile"></input>
+          <br/>
+          <input type="submit" class="submit" value="Upload"></input>
+        </form>
+      </fieldset>
+    </div>
+
+    <% if locals.member?(:update_count) %>
+      <hr />
+      Items Updated: <%= update_count %>
+    <% end %>
+  </body>
+</html>
