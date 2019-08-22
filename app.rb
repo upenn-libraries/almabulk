@@ -58,7 +58,7 @@ post '/' do
     rowdata = Hash.new
     rowdata['mmsid'] = r[0].value
     rowdata['hldid'] = r[1].value
-    Headers.each_with_index { |h,j| rowdata[h] = r[j+2].value || '' }
+    Headers.each_with_index { |h,j| rowdata[h] = r[j+2]&.value || '' }
     success = alma.update(rowdata)
     successful_updates += 1 if success == 200
   end
