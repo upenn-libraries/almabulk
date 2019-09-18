@@ -8,7 +8,8 @@ require 'rubyXL'
 Headers = ['pid', 'barcode', 'description',
            'enumeration_a', 'enumeration_b', 'enumeration_c', 'enumeration_d',
            'enumeration_e', 'enumeration_f', 'enumeration_g', 'enumeration_h',
-           'chronology_i', 'chronology_j', 'chronology_k', 'chronology_l', 'chronology_m']
+           'chronology_i', 'chronology_j', 'chronology_k', 'chronology_l', 'chronology_m',
+           'pages', 'receiving_operator', 'physical_material_type.value', 'policy.value']
 
 get '/' do
   erb :index
@@ -29,7 +30,7 @@ get '/:mmsid/:hldid' do
   worksheet.add_cell(0, 0, 'mmsid')
   worksheet.add_cell(0, 1, 'hldid')
   Headers.each_with_index do |h,i|
-    worksheet.add_cell(0, i+2, h)
+    worksheet.add_cell(0, i+2, h.split('.').first)
   end
 
   item_data = [alma.fetch(mmsid, hldid)].flatten
@@ -38,7 +39,7 @@ get '/:mmsid/:hldid' do
     worksheet.add_cell(i+1, 0, mmsid)
     worksheet.add_cell(i+1, 1, hldid)
     Headers.each_with_index do |h,j|
-      worksheet.add_cell(i+1, j+2, item['item_data'][h])
+      worksheet.add_cell(i+1, j+2, item['item_data'].dig(*h.split('.')))
     end
   end
 
@@ -58,7 +59,27 @@ post '/' do
     rowdata = Hash.new
     rowdata['mmsid'] = r[0].value
     rowdata['hldid'] = r[1].value
-    Headers.each_with_index { |h,j| rowdata[h] = r[j+2]&.value || '' }
+
+    Headers.each_with_index { |h,j|
+      path = h.split('.')
+      if path.length > 1
+        key = path.shift
+        terminal = path.pop
+
+        rowdata[key] = {}
+        current = rowdata[key]
+
+        path.each do |p|
+          current[p] = {}
+          current = current[p]
+        end
+
+        current[terminal] = r[j+2]&.value || ''
+      else
+        rowdata[path.first] = r[j+2]&.value || ''
+      end
+    }
+
     success = alma.update(rowdata)
     successful_updates += 1 if success == 200
   end
