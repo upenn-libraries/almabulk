@@ -1,15 +1,14 @@
 require 'sinatra'
 require 'pry-byebug'
-
 require 'httparty'
 require 'json'
 require 'rubyXL'
 
-Headers = ['pid', 'barcode', 'description',
-           'enumeration_a', 'enumeration_b', 'enumeration_c', 'enumeration_d',
-           'enumeration_e', 'enumeration_f', 'enumeration_g', 'enumeration_h',
-           'chronology_i', 'chronology_j', 'chronology_k', 'chronology_l', 'chronology_m',
-           'pages', 'receiving_operator', 'physical_material_type.value', 'policy.value']
+HEADERS = %w[pid barcode description enumeration_a enumeration_b enumeration_c
+             enumeration_d enumeration_e enumeration_f enumeration_g enumeration_h
+             chronology_i chronology_j chronology_k chronology_l chronology_m pages
+             receiving_operator physical_material_type.value policy.value
+             inventory_number]
 
 get '/' do
   erb :index
@@ -29,7 +28,7 @@ get '/:mmsid/:hldid' do
 
   worksheet.add_cell(0, 0, 'mmsid')
   worksheet.add_cell(0, 1, 'hldid')
-  Headers.each_with_index do |h,i|
+  HEADERS.each_with_index do |h,i|
     worksheet.add_cell(0, i+2, h.split('.').first)
   end
 
@@ -38,7 +37,7 @@ get '/:mmsid/:hldid' do
   item_data.each_with_index do |item,i|
     worksheet.add_cell(i+1, 0, mmsid)
     worksheet.add_cell(i+1, 1, hldid)
-    Headers.each_with_index do |h,j|
+    HEADERS.each_with_index do |h,j|
       worksheet.add_cell(i+1, j+2, item['item_data'].dig(*h.split('.')))
     end
   end
@@ -60,7 +59,7 @@ post '/' do
     rowdata['mmsid'] = r[0].value
     rowdata['hldid'] = r[1].value
 
-    Headers.each_with_index { |h,j|
+    HEADERS.each_with_index { |h,j|
       path = h.split('.')
       if path.length > 1
         key = path.shift
